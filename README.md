@@ -2,6 +2,8 @@
 
 Ce projet est une API backend développée avec NestJS, qui met en place une gestion d'utilisateurs avec une mise à jour partielle des données en utilisant TypeORM (natif nestJS).
 
+test github integration
+
 ## Technologies utilisées
 
 - **NestJS** : Framework backend Node.js progressif
