@@ -1,11 +1,13 @@
 # projet_annuel_poc
 
-Ce projet est une API backend développée avec NestJS, qui met en place une gestion d'utilisateurs avec une mise à jour partielle des données en utilisant TypeORM (natif nestJS).
+Ce projet est une API backend développée avec NestJS, qui met en place une gestion d'utilisateurs avec une mise à jour partielle des données en utilisant TypeORM (natif nestJS) et PostgreSQL.
 
 ## Technologies utilisées
 
 - **NestJS** : Framework backend Node.js progressif
 - **TypeORM** : ORM pour TypeScript et JavaScript
+- **PostgreSQL** : Base de données relationnelle
+- **Docker** : Conteneurisation de l'application et de la base de données
 - **Swagger** : Documentation d'API interactive
 
 ## Fonctionnalités
@@ -18,21 +20,76 @@ Ce projet est une API backend développée avec NestJS, qui met en place une ges
 
 ## Installation et utilisation
 
+### Option 1 : Avec Docker (recommandé)
+
+#### Prérequis
+- Docker et Docker Compose installés
+
+#### Démarrage
+
 ```bash
 git clone https://github.com/Zastial/PA_POC_Backend
+cd PA_POC_Backend
 
+# Lancer l'application et la base de données
+docker-compose up --build
+```
+
+#### Arrêt
+
+```bash
+docker-compose down
+```
+
+### Option 2 : Installation locale
+
+#### Prérequis
+- Node.js 18+ 
+- PostgreSQL 16+
+
+#### Configuration
+
+```bash
+git clone https://github.com/Zastial/PA_POC_Backend
 cd PA_POC_Backend
 
 npm i
-npm run start
+```
+
+#### Variables d'environnement
+
+Créer un fichier `.env` (optionnel, utilise les valeurs par défaut si absent) :
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=shareo
+NODE_ENV=development
+```
+
+#### Démarrage
+
+```bash
+# Développement avec watch mode
+npm run start:dev
+
+# Production
+npm run build
+npm run start:prod
 ```
 
 ## Accès
 
 ```bash
 # API
-http://localhost:3000
+http://localhost:3000/api
 
 # Documentation Swagger
-http://localhost:3000/api
+http://localhost:3000/docs
 ```
+
+## Persistance des données
+
+Avec Docker Compose, les données PostgreSQL sont stockées dans un volume nommé `postgres_data` qui persiste même après `docker-compose down`. Elles sont restaurées automatiquement au prochain démarrage avec `docker-compose up`.

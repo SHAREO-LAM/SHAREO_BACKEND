@@ -1,0 +1,8 @@
+# Docker
+node_modules/
+dist/
+
+# Database
+postgres_data/
+*.sqlite
+*.sqlite3
