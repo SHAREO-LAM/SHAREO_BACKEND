@@ -21,8 +21,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('User API')
-    .setDescription('API de gestion des utilisateurs')
+    .setTitle('SHAREO API')
+    .setDescription('API de SHAREO')
     .setVersion('1.0')
     .build();
 
