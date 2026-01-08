@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { UserInformationsService } from './user_informations.service';
-import { CreateUserInformationDto } from './dto/create-user_information.dto';
-import { UpdateUserInformationDto } from './dto/update-user_information.dto';
+import { CreateUserInformationsDto } from './dto/create-user_informations.dto';
+import { UpdateUserInformationsDto } from './dto/update-user_informations.dto';
 import { UserInformations } from '../entities/entities/UserInformations';
 
 @ApiTags('User informations')
@@ -27,8 +27,8 @@ export class UserInformationsController {
     description: 'Information utilisateur créée.',
     type: UserInformations,
   })
-  create(@Body() createUserInformationDto: CreateUserInformationDto) {
-    return this.userInformationsService.create(createUserInformationDto);
+  create(@Body() CreateUserInformationsDto: CreateUserInformationsDto) {
+    return this.userInformationsService.create(CreateUserInformationsDto);
   }
 
   @Get()
@@ -64,9 +64,9 @@ export class UserInformationsController {
   })
   update(
     @Param('id') id: string,
-    @Body() updateUserInformationDto: UpdateUserInformationDto,
+    @Body() UpdateUserInformationsDto: UpdateUserInformationsDto,
   ) {
-    return this.userInformationsService.update(+id, updateUserInformationDto);
+    return this.userInformationsService.update(+id, UpdateUserInformationsDto);
   }
 
   @Delete(':id')

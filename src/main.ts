@@ -15,8 +15,8 @@ async function bootstrap() {
   // Global validation configuration
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // Removes properties that are not defined in DTOs
-      transform: true, // Automatically transforms payloads to DTO instances/types
+      whitelist: true,
+      transform: true,
     }),
   );
 
@@ -27,7 +27,10 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+
+  SwaggerModule.setup('docs', app, document, {
+    jsonDocumentUrl: 'api-json',
+  });
 
   await app.listen(process.env.PORT ?? 3000);
 
@@ -36,4 +39,4 @@ async function bootstrap() {
   console.log(`Swagger documentation is available at: ${url}/docs`);
 }
 
-void bootstrap(); // NOSONAR
+void bootstrap();
