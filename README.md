@@ -23,6 +23,7 @@ Ce projet est une API backend développée avec NestJS, qui met en place une ges
 ### Option 1 : Avec Docker (recommandé)
 
 #### Prérequis
+
 - Docker et Docker Compose installés
 
 #### Démarrage
@@ -41,21 +42,6 @@ docker-compose up --build
 docker-compose down
 ```
 
-### Option 2 : Installation locale
-
-#### Prérequis
-- Node.js 18+ 
-- PostgreSQL 16+
-
-#### Configuration
-
-```bash
-git clone https://github.com/Zastial/PA_POC_Backend
-cd PA_POC_Backend
-
-npm i
-```
-
 #### Variables d'environnement
 
 Créer un fichier `.env` (optionnel, utilise les valeurs par défaut si absent) :
@@ -69,17 +55,6 @@ DB_NAME=shareo
 NODE_ENV=development
 ```
 
-#### Démarrage
-
-```bash
-# Développement avec watch mode
-npm run start:dev
-
-# Production
-npm run build
-npm run start:prod
-```
-
 ## Accès
 
 ```bash
@@ -88,6 +63,12 @@ http://localhost:3000/api
 
 # Documentation Swagger
 http://localhost:3000/docs
+```
+
+## Accès à la base de données
+
+```bash
+docker exec -it shareo_postgres psql -U postgres -d shareo
 ```
 
 ## Persistance des données

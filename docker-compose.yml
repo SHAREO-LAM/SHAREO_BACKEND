@@ -13,6 +13,8 @@ services:
     volumes:
       # Persistent volume for database data
       - postgres_data:/var/lib/postgresql/data
+      # Mount the SQL initialization script
+      - ./shareo_initial_script.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
