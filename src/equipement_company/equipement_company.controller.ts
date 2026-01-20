@@ -12,6 +12,7 @@ import { EquipementCompanyService } from './equipement_company.service';
 import { CreateEquipementCompanyDto } from './dto/create-equipement_company.dto';
 import { UpdateEquipementCompanyDto } from './dto/update-equipement_company.dto';
 import { EquipementCompany } from '../entities/entities/EquipementCompany';
+import { EquipementCompanyReadDto } from './dto/read-equipement-company.dto';
 
 @ApiTags('Equipement companies')
 @Controller('equipement-company')
@@ -48,7 +49,7 @@ export class EquipementCompanyController {
   @ApiResponse({
     status: 200,
     description: 'Équipement trouvé.',
-    type: EquipementCompany,
+    type: EquipementCompanyReadDto,
   })
   findOne(@Param('id') id: string) {
     return this.equipementCompanyService.findOneById(+id);

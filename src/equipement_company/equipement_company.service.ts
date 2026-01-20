@@ -15,7 +15,10 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
 
   // Méthodes avec la clé primaire réelle
   findOneById(id: number | string) {
-    return super.findOne(id, 'equipementCompanyId');
+    return this.equipementCompanyRepo.findOne({
+      where: { equipementCompanyId: String(id) },
+      relations: ['equipementType', 'equipementType.equipementCategory'],
+    });
   }
 
   updateById(id: number | string, dto: Partial<EquipementCompany>) {
