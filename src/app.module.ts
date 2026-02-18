@@ -15,6 +15,7 @@ import { PaymentStatusModule } from './payment_status/payment_status.module';
 import { PaymentModule } from './payment/payment.module';
 import { PayoutStatusModule } from './payout_status/payout_status.module';
 import { CompanyPayoutModule } from './company_payout/company_payout.module';
+import { CheckoutModule } from './checkout/checkout.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { CompanyPayoutModule } from './company_payout/company_payout.module';
     PaymentModule,
     PayoutStatusModule,
     CompanyPayoutModule,
+    CheckoutModule,
   ],
   controllers: [],
   providers: [],
