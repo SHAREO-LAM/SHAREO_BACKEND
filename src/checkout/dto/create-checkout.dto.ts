@@ -41,7 +41,6 @@ export class CheckoutItemDto {
   @ApiProperty()
   @IsNumber()
   unitPrice: number;
-  productName: any;
 }
 
 export class CreateCheckoutDto {
