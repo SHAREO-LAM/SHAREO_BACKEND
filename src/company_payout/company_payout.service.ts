@@ -48,7 +48,7 @@ export class CompanyPayoutService extends BaseService<CompanyPayout> {
         orderItemId: item.orderItemId,
         companyId,
         amount: gross,
-        payoutStatusId: '1',
+        payoutStatusId: '2', // Confirmé
         datetimeCreate: new Date().toISOString(),
         userCreateId: '2',
       });

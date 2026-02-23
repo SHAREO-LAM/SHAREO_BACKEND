@@ -24,7 +24,7 @@ export class AvailabilityService {
             oi.end_date::date,
             interval '1 day'
         ) AS gs
-        WHERE oi.start_date >= CURRENT_DATE
+        WHERE oi.start_date >= CURRENT_DATE - INTERVAL '2 months'
         AND o.status_id NOT IN (1, 5)
         AND oi.domain_id = $1
         ORDER BY unavailable_date;
