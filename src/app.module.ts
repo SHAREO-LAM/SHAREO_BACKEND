@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { UserInformationsModule } from './user_informations/user_informations.module';
 import { CompanyModule } from './company/company.module';
@@ -29,6 +30,7 @@ import { CompanyPayoutModule } from './company_payout/company_payout.module';
       synchronize: false,
       logging: ['query', 'error'],
     }),
+    AuthModule,
     UserModule,
     UserInformationsModule,
     CompanyModule,

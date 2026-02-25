@@ -18,6 +18,18 @@ Ce projet est une API backend développée avec NestJS, qui met en place une ges
 - Mise à jour partielle d'utilisateurs
 - Suppression d'utilisateurs
 
+## Sécuriser un endpoint (JWT)
+
+Pour vérifier que l'utilisateur est connecté et que son JWT n'a pas expiré, ajouter le guard sur l'endpoint :
+
+```ts
+@UseGuards(JwtAuthGuard)
+@Get('profile')
+getProfile(@CurrentUser() user: User) {
+	return user;
+}
+```
+
 ## Installation et utilisation
 
 ### Option 1 : Avec Docker (recommandé)
