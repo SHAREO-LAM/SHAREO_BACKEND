@@ -75,4 +75,35 @@ export class PaymentController {
   remove(@Param('id') id: string) {
     return this.paymentService.removeById(+id);
   }
+
+  @Post(':id/confirm')
+  @ApiOperation({
+    summary: 'Confirmer un paiement',
+    description:
+      'Confirme le paiement, met à jour la commande associée et déclenche la création des payouts.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID du paiement à confirmer',
+    example: 12,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Paiement confirmé et payouts créés',
+    schema: {
+      example: {
+        message: 'Payment confirmed successfully',
+        paymentId: 12,
+        orderId: 45,
+        payoutsCreated: 2,
+      },
+    },
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Paiement introuvable ou déjà confirmé',
+  })
+  async confirmPayment(@Param('id') id: string) {
+    return this.paymentService.confirmPayment(id);
+  }
 }

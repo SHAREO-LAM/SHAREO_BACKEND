@@ -1,19 +1,66 @@
-import { Injectable } from '@nestjs/common';
-import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
+
+import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
+import { OrderItem } from 'src/entities/entities/OrderItem';
+
 import { BaseService } from 'src/common/base.service';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class CompanyPayoutService extends BaseService<CompanyPayout> {
   constructor(
     @InjectRepository(CompanyPayout)
     private readonly companyPayoutRepo: Repository<CompanyPayout>,
+    private readonly dataSource: DataSource,
   ) {
     super(companyPayoutRepo);
   }
 
-  // Méthodes DB-first pour gérer la PK companyPayoutId
+  async createPayoutsForOrder(
+    orderId: string,
+    manager: EntityManager,
+  ): Promise<CompanyPayout[]> {
+    const orderItems = await manager.find(OrderItem, {
+      where: { orderId },
+      relations: ['equipementCompany', 'domain'],
+    });
+
+    if (!orderItems.length) {
+      throw new BadRequestException('No order items found');
+    }
+
+    const payouts: CompanyPayout[] = [];
+
+    for (const item of orderItems) {
+      const gross = item.unitPrice * Number(item.quantity);
+
+      const companyId =
+        item.equipementCompany?.companyId ?? item.domain?.companyId;
+
+      if (!companyId) {
+        throw new BadRequestException(
+          `No company found for orderItem ${item.orderItemId}`,
+        );
+      }
+
+      const payout = manager.create(CompanyPayout, {
+        orderItemId: item.orderItemId,
+        companyId,
+        amount: gross,
+        payoutStatusId: '2', // Confirmé
+        datetimeCreate: new Date().toISOString(),
+        userCreateId: '2',
+      });
+
+      payouts.push(payout);
+    }
+
+    await manager.save(CompanyPayout, payouts);
+
+    return payouts;
+  }
+
   findOneById(id: number | string) {
     return super.findOne(id, 'companyPayoutId');
   }
