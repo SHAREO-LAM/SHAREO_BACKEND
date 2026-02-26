@@ -33,8 +33,8 @@ export class PaymentService extends BaseService<Payment> {
     return super.remove(id, 'paymentId');
   }
 
-  async confirmPayment(paymentId: string) {
-    console.log(`Confirming payment with ID: ${paymentId}`);
+  // userId represents the authenticated user performing the confirmation
+  async confirmPayment(paymentId: string, userId: string) {
     return await this.dataSource.transaction(async (manager) => {
       // Récupérer le paiement
       const payment = await manager.findOne(Payment, {
@@ -69,6 +69,7 @@ export class PaymentService extends BaseService<Payment> {
       const payouts = await this.companyPayoutService.createPayoutsForOrder(
         payment.orderId,
         manager,
+        userId,
       );
 
       return {

@@ -4,17 +4,22 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './Users';
-import { UserOrderInformations } from './UserOrderInformations';
+import { Order } from './Orders';
+import { UserInformations } from './UserInformations';
 
-@Index('user_informations_pkey', ['userInformationsId'], { unique: true })
-@Entity('user_informations', { schema: 'public' })
-export class UserInformations {
-  @PrimaryGeneratedColumn({ type: 'bigint', name: 'user_informations_id' })
-  userInformationsId: string;
+@Index('user_order_informations_pkey', ['userOrderInformationsId'], {
+  unique: true,
+})
+@Entity('user_order_informations', { schema: 'public' })
+export class UserOrderInformations {
+  @PrimaryGeneratedColumn({
+    type: 'bigint',
+    name: 'user_order_informations_id',
+  })
+  userOrderInformationsId: string;
 
   @Column('character varying', { name: 'name', nullable: true, length: 255 })
   name: string | null;
@@ -74,13 +79,28 @@ export class UserInformations {
   @Column('bigint', { name: 'user_id', nullable: true })
   userId: string;
 
-  @ManyToOne(() => User, (user) => user.userInformations)
+  @Column('bigint', { name: 'order_id', nullable: true })
+  orderId: string;
+
+  @Column('bigint', { name: 'user_informations_id', nullable: true })
+  userInformationsId: string;
+
+  @ManyToOne(() => User, (user) => user.userOrderInformations)
   @JoinColumn([{ name: 'user_id', referencedColumnName: 'userId' }])
   user: User;
 
-  @OneToMany(
-    () => UserOrderInformations,
-    (userOrderInformations) => userOrderInformations.userInformations,
-  )
-  userOrderInformations: UserOrderInformations[];
+  @ManyToOne(() => Order, (order) => order.userOrderInformations)
+  @JoinColumn([{ name: 'order_id', referencedColumnName: 'orderId' }])
+  order: Order;
+
+  @ManyToOne(() => UserInformations, (infos) => infos.userOrderInformations, {
+    nullable: true,
+  })
+  @JoinColumn([
+    {
+      name: 'user_informations_id',
+      referencedColumnName: 'userInformationsId',
+    },
+  ])
+  userInformations: UserInformations;
 }

@@ -6,6 +6,7 @@ import { OrderItem } from '../entities/entities/OrderItem';
 import { Payment } from '../entities/entities/Payment';
 
 import { CreateCheckoutDto, CheckoutItemType } from './dto/create-checkout.dto';
+import { UserOrderInformations } from 'src/entities/entities/UserOrderInformations';
 
 @Injectable()
 export class CheckoutService {
@@ -13,19 +14,38 @@ export class CheckoutService {
 
   constructor(private readonly dataSource: DataSource) {}
 
-  async createCheckout(dto: CreateCheckoutDto) {
+  // userId corresponds to the authenticated user making the request
+  async createCheckout(dto: CreateCheckoutDto, userId: string) {
     try {
       return await this.dataSource.transaction(async (manager) => {
         let subtotal = 0;
 
         const order = manager.create(Order, {
           statusId: '1',
-          userId: '2', // TODO: JWT
+          userId,
           datetimeCreate: new Date().toISOString(),
-          userCreateId: '2',
+          userCreateId: userId,
         });
 
         const savedOrder = await manager.save(Order, order);
+
+        const userOrderInformations = manager.create(UserOrderInformations, {
+          userId: userId,
+          order: savedOrder,
+          //userInformations A ajouter plus tard si jamais
+          name: dto.address.name,
+          lastName: dto.address.lastName,
+          streetName: dto.address.streetName,
+          houseNumber: dto.address.houseNumber,
+          postcode: dto.address.postcode,
+          city: dto.address.city,
+          country: dto.address.country,
+          phone: dto.address.phone,
+          datetimeCreate: new Date().toISOString(),
+          userCreateId: userId,
+        });
+
+        await manager.save(UserOrderInformations, userOrderInformations);
 
         const orderItems: OrderItem[] = [];
 
@@ -54,7 +74,7 @@ export class CheckoutService {
           orderItem.endDate = item.endDate;
           orderItem.unitPrice = item.unitPrice;
           orderItem.datetimeCreate = new Date().toISOString();
-          orderItem.userCreateId = '2';
+          orderItem.userCreateId = userId;
 
           orderItems.push(orderItem);
         }
@@ -69,7 +89,7 @@ export class CheckoutService {
           amount: total,
           provider: 'stripe',
           datetimeCreate: new Date().toISOString(),
-          userCreateId: '2',
+          userCreateId: userId,
           orderId: savedOrder.orderId,
           paymentStatusId: '1', // Pending
         });

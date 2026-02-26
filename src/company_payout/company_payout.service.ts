@@ -20,12 +20,12 @@ export class CompanyPayoutService extends BaseService<CompanyPayout> {
   async createPayoutsForOrder(
     orderId: string,
     manager: EntityManager,
+    userId: string,
   ): Promise<CompanyPayout[]> {
     const orderItems = await manager.find(OrderItem, {
       where: { orderId },
       relations: ['equipementCompany', 'domain'],
     });
-
     if (!orderItems.length) {
       throw new BadRequestException('No order items found');
     }
@@ -50,7 +50,7 @@ export class CompanyPayoutService extends BaseService<CompanyPayout> {
         amount: gross,
         payoutStatusId: '2', // Confirmé
         datetimeCreate: new Date().toISOString(),
-        userCreateId: '2',
+        userCreateId: userId,
       });
 
       payouts.push(payout);

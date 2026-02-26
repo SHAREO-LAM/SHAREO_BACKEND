@@ -20,7 +20,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<void> {
+  async register(registerDto: RegisterDto): Promise<{
+    access_token: string;
+    user: {
+      login: string;
+      email: string;
+      isAdmin: boolean | null;
+      isSuperAdmin: boolean | null;
+    };
+  }> {
     const existingUser = await this.userRepository.findOne({
       where: [{ email: registerDto.email }, { login: registerDto.login }],
     });
@@ -40,6 +48,16 @@ export class AuthService {
     });
 
     await this.userRepository.save(user);
+    const token = this.generateToken(user);
+    return {
+      access_token: token,
+      user: {
+        login: user.login,
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isSuperAdmin: user.isSuperAdmin,
+      },
+    };
   }
 
   async login(loginDto: LoginDto) {

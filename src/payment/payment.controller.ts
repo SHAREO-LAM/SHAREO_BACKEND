@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentService } from './payment.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -18,6 +19,9 @@ import {
   ApiBody,
 } from '@nestjs/swagger';
 import { Payment } from '../entities/entities/Payment';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { User } from '../entities/entities/Users';
 
 @ApiTags('Payments')
 @Controller('payment')
@@ -76,6 +80,7 @@ export class PaymentController {
     return this.paymentService.removeById(+id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post(':id/confirm')
   @ApiOperation({
     summary: 'Confirmer un paiement',
@@ -103,7 +108,7 @@ export class PaymentController {
     status: 400,
     description: 'Paiement introuvable ou déjà confirmé',
   })
-  async confirmPayment(@Param('id') id: string) {
-    return this.paymentService.confirmPayment(id);
+  async confirmPayment(@CurrentUser() user: User, @Param('id') id: string) {
+    return this.paymentService.confirmPayment(id, user.userId);
   }
 }

@@ -17,6 +17,7 @@ import { PaymentModule } from './payment/payment.module';
 import { PayoutStatusModule } from './payout_status/payout_status.module';
 import { CompanyPayoutModule } from './company_payout/company_payout.module';
 import { CheckoutModule } from './checkout/checkout.module';
+import { UserOrderInformations } from './entities/entities/UserOrderInformations';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { CheckoutModule } from './checkout/checkout.module';
       autoLoadEntities: true,
       synchronize: false,
       logging: ['query', 'error'],
+      entities: [UserOrderInformations],
     }),
     AuthModule,
     UserModule,
