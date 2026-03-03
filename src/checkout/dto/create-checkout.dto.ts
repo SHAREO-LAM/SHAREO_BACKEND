@@ -43,6 +43,48 @@ export class CheckoutItemDto {
   unitPrice: number;
 }
 
+export class CheckoutAddressDto {
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  name?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  streetName?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  houseNumber?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  postcode?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  city?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  country?: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  phone?: string;
+}
+
 export class CreateCheckoutDto {
   @ApiProperty({ type: [CheckoutItemDto] })
   @IsArray()
@@ -53,4 +95,9 @@ export class CreateCheckoutDto {
   @ApiProperty()
   @IsNumber()
   cartTotal: number;
+
+  @ApiProperty({ type: CheckoutAddressDto })
+  @ValidateNested()
+  @Type(() => CheckoutAddressDto)
+  address: CheckoutAddressDto;
 }

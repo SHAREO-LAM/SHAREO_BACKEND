@@ -11,6 +11,7 @@ import { OrderStatus } from './OrderStatus';
 import { User } from './Users';
 import { OrderItem } from './OrderItem';
 import { Payment } from './Payment';
+import { UserOrderInformations } from './UserOrderInformations';
 
 @Index('orders_pkey', ['orderId'], { unique: true })
 @Entity('orders', { schema: 'public' })
@@ -49,4 +50,10 @@ export class Order {
 
   @OneToMany(() => Payment, (payment) => payment.order)
   payments: Payment[];
+
+  @OneToMany(
+    () => UserOrderInformations,
+    (userOrderInformations) => userOrderInformations.order,
+  )
+  userOrderInformations: UserOrderInformations[];
 }
