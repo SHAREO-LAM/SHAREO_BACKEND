@@ -32,6 +32,8 @@ import { UserOrderInformations } from './entities/entities/UserOrderInformations
       synchronize: false,
       logging: ['query', 'error'],
       entities: [UserOrderInformations],
+      migrations: ['dist/db/migrations/*{.ts,.js}'],
+      migrationsRun: true,
     }),
     AuthModule,
     UserModule,
