@@ -83,6 +83,18 @@ http://localhost:3000/docs
 docker exec -it shareo_postgres psql -U postgres -d shareo
 ```
 
+## Migrations
+
+Les migrations TypeORM se lancent **automatiquement** au démarrage de l'application.
+
+### Commandes
+
+```bash
+npm run migration:run      # Exécuter les migrations
+npm run migration:generate -- <name>
+npm run migration:revert   # Revert la dernière migration
+```
+
 ## Persistance des données
 
 Avec Docker Compose, les données PostgreSQL sont stockées dans un volume nommé `postgres_data` qui persiste même après `docker-compose down`. Elles sont restaurées automatiquement au prochain démarrage avec `docker-compose up`.
