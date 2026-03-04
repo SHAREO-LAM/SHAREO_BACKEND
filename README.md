@@ -32,40 +32,30 @@ getProfile(@CurrentUser() user: User) {
 
 ## Installation et utilisation
 
-### Option 1 : Avec Docker (recommandé)
-
-#### Prérequis
-
-- Docker et Docker Compose installés
-
-#### Démarrage
+### Local (avec PostgreSQL dans un container)
 
 ```bash
-git clone https://github.com/Zastial/PA_POC_Backend
-cd PA_POC_Backend
-
-# Lancer l'application et la base de données
+# Démarrage avec le postgres du container
 docker-compose up --build
+
+# API : http://localhost:3000/api
+# Docs : http://localhost:3000/docs
 ```
 
-#### Arrêt
+### Production / Sandbox (sur VM avec PostgreSQL existant)
 
 ```bash
-docker-compose down
+# Définir les variables d'environnement
+export DB_HOST=127.0.0.1
+export DB_PASSWORD=<mot_de_passe>
+export DB_NAME=shareo        # ou shareo_sb pour sandbox
+export JWT_SECRET=<secret>
+
+# Déployer juste le backend (sans postgres)
+docker-compose -f docker-compose-backend.yml up -d
 ```
 
-#### Variables d'environnement
-
-Créer un fichier `.env` (optionnel, utilise les valeurs par défaut si absent) :
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=shareo
-NODE_ENV=development
-```
+Le backend se connectera au PostgreSQL existant sur la machine hôte.
 
 ## Accès
 
@@ -77,7 +67,7 @@ http://localhost:3000/api
 http://localhost:3000/docs
 ```
 
-## Accès à la base de données
+## Migrations
 
 ```bash
 docker exec -it shareo_postgres psql -U postgres -d shareo

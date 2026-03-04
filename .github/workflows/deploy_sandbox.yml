@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: zastial/shareo-backend-prod
+          images: zastial/shareo-backend-sandbox
           tags: |
             type=raw,value=latest
             type=sha
