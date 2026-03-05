@@ -13,6 +13,10 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
     super(equipementCompanyRepo);
   }
 
+  findAll(): Promise<EquipementCompany[]> {
+      return this.equipementCompanyRepo.find({ relations: ['equipementType', 'equipementType.equipementCategory'] });
+  }
+
   // Méthodes avec la clé primaire réelle
   findOneById(id: number | string) {
     return this.equipementCompanyRepo.findOne({

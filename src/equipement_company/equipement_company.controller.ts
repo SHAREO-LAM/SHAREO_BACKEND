@@ -46,7 +46,7 @@ export class EquipementCompanyController {
   @ApiResponse({
     status: 200,
     description: 'Liste des équipements.',
-    type: [EquipementCompany],
+    type: [EquipementCompanyReadDto],
   })
   findAll() {
     return this.equipementCompanyService.findAll();
