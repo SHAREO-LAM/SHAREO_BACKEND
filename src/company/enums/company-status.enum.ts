@@ -1,0 +1,4 @@
+export enum CompanyStatusEnum {
+  PENDING_VALIDATION = 'PENDING_VALIDATION',
+  VALIDATED = 'VALIDATED',
+}
