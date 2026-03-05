@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsEnum } from 'class-validator';
+import { CompanyStatusEnum } from '../enums/company-status.enum';
 
 export class CreateCompanyDto {
   @ApiProperty({ description: 'Nom de l’entreprise' })
@@ -85,6 +86,11 @@ export class CreateCompanyDto {
   @IsOptional()
   @IsString()
   logoUrl?: string;
+
+  @ApiProperty({ description: 'Statut de l’entreprise', enum: CompanyStatusEnum, required: false })
+  @IsOptional()
+  @IsEnum(CompanyStatusEnum)
+  status?: CompanyStatusEnum;
 
   @ApiProperty({ description: 'Date de création', required: false })
   @IsOptional()
