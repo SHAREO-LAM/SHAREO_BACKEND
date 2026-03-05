@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { UserInformationsModule } from './user_informations/user_informations.module';
 import { CompanyModule } from './company/company.module';
@@ -15,6 +16,8 @@ import { PaymentStatusModule } from './payment_status/payment_status.module';
 import { PaymentModule } from './payment/payment.module';
 import { PayoutStatusModule } from './payout_status/payout_status.module';
 import { CompanyPayoutModule } from './company_payout/company_payout.module';
+import { CheckoutModule } from './checkout/checkout.module';
+import { UserOrderInformations } from './entities/entities/UserOrderInformations';
 
 @Module({
   imports: [
@@ -28,7 +31,11 @@ import { CompanyPayoutModule } from './company_payout/company_payout.module';
       autoLoadEntities: true,
       synchronize: false,
       logging: ['query', 'error'],
+      entities: [UserOrderInformations],
+      migrations: ['dist/db/migrations/*{.ts,.js}'],
+      migrationsRun: true,
     }),
+    AuthModule,
     UserModule,
     UserInformationsModule,
     CompanyModule,
@@ -44,6 +51,7 @@ import { CompanyPayoutModule } from './company_payout/company_payout.module';
     PaymentModule,
     PayoutStatusModule,
     CompanyPayoutModule,
+    CheckoutModule,
   ],
   controllers: [],
   providers: [],

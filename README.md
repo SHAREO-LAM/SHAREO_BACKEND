@@ -18,42 +18,44 @@ Ce projet est une API backend développée avec NestJS, qui met en place une ges
 - Mise à jour partielle d'utilisateurs
 - Suppression d'utilisateurs
 
+## Sécuriser un endpoint (JWT)
+
+Pour vérifier que l'utilisateur est connecté et que son JWT n'a pas expiré, ajouter le guard sur l'endpoint :
+
+```ts
+@UseGuards(JwtAuthGuard)
+@Get('profile')
+getProfile(@CurrentUser() user: User) {
+	return user;
+}
+```
+
 ## Installation et utilisation
 
-### Option 1 : Avec Docker (recommandé)
-
-#### Prérequis
-
-- Docker et Docker Compose installés
-
-#### Démarrage
+### Local (avec PostgreSQL dans un container)
 
 ```bash
-git clone https://github.com/Zastial/PA_POC_Backend
-cd PA_POC_Backend
-
-# Lancer l'application et la base de données
+# Démarrage avec le postgres du container
 docker-compose up --build
+
+# API : http://localhost:3000/api
+# Docs : http://localhost:3000/docs
 ```
 
-#### Arrêt
+### Production / Sandbox (sur VM avec PostgreSQL existant)
 
 ```bash
-docker-compose down
+# Définir les variables d'environnement
+export DB_HOST=127.0.0.1
+export DB_PASSWORD=<mot_de_passe>
+export DB_NAME=shareo        # ou shareo_sb pour sandbox
+export JWT_SECRET=<secret>
+
+# Déployer juste le backend (sans postgres)
+docker-compose -f docker-compose-backend.yml up -d
 ```
 
-#### Variables d'environnement
-
-Créer un fichier `.env` (optionnel, utilise les valeurs par défaut si absent) :
-
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_NAME=shareo
-NODE_ENV=development
-```
+Le backend se connectera au PostgreSQL existant sur la machine hôte.
 
 ## Accès
 
@@ -65,10 +67,22 @@ http://localhost:3000/api
 http://localhost:3000/docs
 ```
 
-## Accès à la base de données
+## Migrations
 
 ```bash
 docker exec -it shareo_postgres psql -U postgres -d shareo
+```
+
+## Migrations
+
+Les migrations TypeORM se lancent **automatiquement** au démarrage de l'application.
+
+### Commandes
+
+```bash
+npm run migration:run      # Exécuter les migrations
+npm run migration:generate -- <name>
+npm run migration:revert   # Revert la dernière migration
 ```
 
 ## Persistance des données

@@ -8,6 +8,7 @@ import {
 import { Order } from './Orders';
 import { UserCompany } from './UserCompany';
 import { UserInformations } from './UserInformations';
+import { UserOrderInformations } from './UserOrderInformations';
 
 @Index('users_pkey', ['userId'], { unique: true })
 @Entity('users', { schema: 'public' })
@@ -53,4 +54,10 @@ export class User {
     (userInformations) => userInformations.user,
   )
   userInformations: UserInformations[];
+
+  @OneToMany(
+    () => UserOrderInformations,
+    (userOrderInformations) => userOrderInformations.user,
+  )
+  userOrderInformations: UserOrderInformations[];
 }

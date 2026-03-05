@@ -1,13 +1,13 @@
 # Build stage
-FROM node:18-alpine AS builder
+FROM node:20.11-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (include dev deps for build)
+RUN npm ci --prefer-offline --no-audit --no-fund
 
 # Copy source code
 COPY . .
@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Runtime stage
-FROM node:18-alpine
+FROM node:20.11-alpine 
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ RUN apk add --no-cache dumb-init
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm ci --omit=dev --prefer-offline --no-audit --no-fund
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist

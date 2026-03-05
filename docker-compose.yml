@@ -9,45 +9,35 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: shareo
     ports:
-      - '5433:5432'
+      - "5432:5432"
     volumes:
-      # Persistent volume for database data
       - postgres_data:/var/lib/postgresql/data
-      # Mount the SQL initialization script
-      - ./shareo_initial_script.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
-    networks:
-      - shareo_network
 
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: node:18-alpine
     container_name: shareo_backend
+    working_dir: /app
     environment:
       DB_HOST: postgres
       DB_PORT: 5432
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_NAME: shareo
-      NODE_ENV: production
+      NODE_ENV: development
     ports:
-      - '3000:3000'
+      - "3000:3000"
+    volumes:
+      - ./:/app:delegated
+      - /app/node_modules
+    command: sh -c "npm ci && npm run start:dev"
     depends_on:
       postgres:
         condition: service_healthy
-    networks:
-      - shareo_network
-    restart: unless-stopped
 
 volumes:
   postgres_data:
-    driver: local
-
-networks:
-  shareo_network:
-    driver: bridge
