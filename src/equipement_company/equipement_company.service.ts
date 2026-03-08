@@ -40,17 +40,7 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
 
   async removeById(id: number | string) {
     const idStr = String(id);
-    // // Marquer les paiements de société liés aux réservations de cet équipement comme supprimés
-    // await this.companyPayoutRepo
-    //   .createQueryBuilder()
-    //   .update()
-    //   //.set({ datetimeDelete: new Date() })
-    //   .where('orderItemId IN (SELECT order_item_id FROM order_item WHERE equipement_company_id = :id AND datetime_delete IS NULL)', { id: idStr })
-    //   .execute();
-    // // Marquer les réservations (OrderItems) liées à cet équipement comme supprimées
-    // await this.orderItemRepo.update({ equipementCompanyId: idStr, datetimeDelete: null }, { datetimeDelete: new Date() });
-    // // Marquer l'équipement comme supprimé
-    // await this.equipementCompanyRepo.update({ equipementCompanyId: idStr }, { datetimeDelete: new Date() });
+   
     this.equipementCompanyRepo.delete({ equipementCompanyId: idStr });
   }
 }
