@@ -4,7 +4,7 @@ import { OrderItem } from 'src/entities/entities/OrderItem';
 import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/base.service';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class EquipementCompanyService extends BaseService<EquipementCompany> {
@@ -20,15 +20,19 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
   }
 
   findAll(): Promise<EquipementCompany[]> {
-      return this.equipementCompanyRepo.find({ 
-        relations: ['equipementType', 'equipementType.equipementCategory'],
-      });
+    // Ne retourne que les éléments non supprimés
+    return this.equipementCompanyRepo.find({ 
+      where: { datetimeDeleted: IsNull() },
+      relations: ['equipementType', 'equipementType.equipementCategory'],
+    });
   }
 
-  // Méthodes avec la clé primaire réelle
   findOneById(id: number | string) {
     return this.equipementCompanyRepo.findOne({
-      where: { equipementCompanyId: String(id) },
+      where: { 
+        equipementCompanyId: String(id),
+        //datetimeDeleted: IsNull()
+      },
       relations: ['equipementType', 'equipementType.equipementCategory'],
     });
   }
@@ -39,7 +43,11 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
 
   async removeById(id: number | string) {
     const idStr = String(id);
-   
-    await this.equipementCompanyRepo.delete({ equipementCompanyId: idStr });
+
+    // Soft delete : met à jour datetimeDeleted au lieu de supprimer
+    await this.equipementCompanyRepo.update(
+      { equipementCompanyId: idStr },
+      { datetimeDeleted: new Date() },
+    );
   }
 }

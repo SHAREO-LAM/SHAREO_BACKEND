@@ -11,7 +11,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'shareo',
-  entities: [path.join(__dirname, '**/*.entity{.ts,.js}')],
+  entities: [path.join(__dirname, 'entities/entities/*.js')],
   migrations: [path.join(__dirname, 'db/migrations', '*{.ts,.js}')],
   synchronize: false,
   logging: false,
