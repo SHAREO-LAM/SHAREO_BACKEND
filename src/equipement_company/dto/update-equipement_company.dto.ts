@@ -4,8 +4,4 @@ import { IsString } from 'class-validator';
 
 export class UpdateEquipementCompanyDto extends PartialType(
   CreateEquipementCompanyDto,
-) {
-    @ApiProperty({ description: 'Id de l’équipement' })
-    @IsString()
-    id: string;
-}
+) {}

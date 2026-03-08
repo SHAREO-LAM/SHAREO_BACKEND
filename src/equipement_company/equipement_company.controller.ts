@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -30,15 +31,51 @@ export class EquipementCompanyController {
     private readonly availabilityService: AvailabilityService,
   ) {}
 
+  /** Fonction utilitaire pour transformer l’entité en DTO front */
+  private mapToReadDto(e: EquipementCompany): EquipementCompanyReadDto {
+    return {
+      equipementCompanyId: e.equipementCompanyId,
+      displayName: e.displayName,
+      description: e.description ?? undefined,
+      pricePerDay: e.pricePerDay,
+      stock: e.stock,
+      companyId: e.companyId,
+      equipementTypeId: e.equipementTypeId,
+      datetimeCreate: e.datetimeCreate,
+      datetimeUpdate: e.datetimeUpdate ?? undefined,
+      userCreateId: e.userCreateId ?? undefined,
+      userUpdateId: e.userUpdateId ?? undefined,
+      equipementType: e.equipementType
+        ? {
+            id: e.equipementType.equipementTypeId ,
+            name: e.equipementType.name ?? undefined,
+            code: e.equipementType.code ?? undefined,
+            equipementCategory: e.equipementType.equipementCategory
+              ? {
+                  id:
+                    e.equipementType.equipementCategory.equipementCategoryId,
+                  name: e.equipementType.equipementCategory.name ?? undefined,
+                  code: e.equipementType.equipementCategory.code ?? undefined,
+                  datetimeCreate: e.equipementType.equipementCategory.datetimeCreate,
+                  datetimeUpdate:
+                    e.equipementType.equipementCategory.datetimeUpdate ?? undefined,
+                }
+              : undefined,
+          }
+        : undefined,
+    };
+  }
+
   @Post()
   @ApiOperation({ summary: 'Créer un équipement pour une société' })
   @ApiResponse({
     status: 201,
     description: 'Équipement créé.',
-    type: EquipementCompany,
+    type: EquipementCompanyReadDto,
   })
-  create(@Body() createEquipementCompanyDto: CreateEquipementCompanyDto) {
-    return this.equipementCompanyService.create(createEquipementCompanyDto);
+  async create(@Body() createEquipementCompanyDto: CreateEquipementCompanyDto) {
+    const entity = await this.equipementCompanyService.create(createEquipementCompanyDto);
+    return this.mapToReadDto(entity);
   }
 
   @Get()
@@ -48,8 +85,9 @@ export class EquipementCompanyController {
     description: 'Liste des équipements.',
     type: [EquipementCompanyReadDto],
   })
-  findAll() {
-    return this.equipementCompanyService.findAll();
+  async findAll(): Promise<EquipementCompanyReadDto[]> {
+    const entities = await this.equipementCompanyService.findAll();
+    return entities.map(this.mapToReadDto);
   }
 
   @Get(':id')
@@ -60,8 +98,12 @@ export class EquipementCompanyController {
     description: 'Équipement trouvé.',
     type: EquipementCompanyReadDto,
   })
-  findOne(@Param('id') id: string) {
-    return this.equipementCompanyService.findOneById(+id);
+  async findOne(@Param('id') id: string): Promise<EquipementCompanyReadDto> {
+    const entity = await this.equipementCompanyService.findOneById(+id);
+    if (!entity) {
+      throw new NotFoundException(`Équipement avec ID ${id} non trouvé`);
+    }
+    return this.mapToReadDto(entity);
   }
 
   @Patch(':id')
@@ -70,16 +112,17 @@ export class EquipementCompanyController {
   @ApiResponse({
     status: 200,
     description: 'Équipement mis à jour.',
-    type: EquipementCompany,
+    type: EquipementCompanyReadDto,
   })
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateEquipementCompanyDto: UpdateEquipementCompanyDto,
-  ) {
-    return this.equipementCompanyService.updateById(
+  ): Promise<EquipementCompanyReadDto> {
+    const entity = await this.equipementCompanyService.updateById(
       +id,
       updateEquipementCompanyDto,
     );
+    return this.mapToReadDto(entity);
   }
 
   @Delete(':id')

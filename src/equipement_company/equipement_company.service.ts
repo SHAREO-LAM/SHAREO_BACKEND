@@ -22,14 +22,13 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
   findAll(): Promise<EquipementCompany[]> {
       return this.equipementCompanyRepo.find({ 
         relations: ['equipementType', 'equipementType.equipementCategory'],
-        //where: { datetimeDelete: null }
       });
   }
 
   // Méthodes avec la clé primaire réelle
   findOneById(id: number | string) {
     return this.equipementCompanyRepo.findOne({
-      //where: { equipementCompanyId: String(id), datetimeDelete: null },
+      where: { equipementCompanyId: String(id) },
       relations: ['equipementType', 'equipementType.equipementCategory'],
     });
   }
@@ -41,6 +40,6 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
   async removeById(id: number | string) {
     const idStr = String(id);
    
-    this.equipementCompanyRepo.delete({ equipementCompanyId: idStr });
+    await this.equipementCompanyRepo.delete({ equipementCompanyId: idStr });
   }
 }
