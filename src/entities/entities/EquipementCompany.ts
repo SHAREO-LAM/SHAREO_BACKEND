@@ -39,9 +39,6 @@ export class EquipementCompany {
   @Column('date', { name: 'datetime_update', nullable: true })
   datetimeUpdate: string | null;
 
-  @Column('date', { name: 'datetime_delete', nullable: true })
-  datetimeDelete: string | null;
-
   @Column('bigint', { name: 'user_create_id', nullable: true })
   userCreateId: string | null;
 
