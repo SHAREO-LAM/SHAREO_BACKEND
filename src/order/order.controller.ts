@@ -63,4 +63,18 @@ export class OrderController {
   remove(@Param('id') id: string) {
     return this.orderService.removeById(+id);
   }
+
+  @Get('user/:userId')
+  @ApiOperation({
+    summary:
+      "Récupérer toutes les commandes d'un utilisateur avec ses articles",
+  })
+  @ApiParam({ name: 'userId', description: "ID de l'utilisateur" })
+  @ApiResponse({
+    status: 200,
+    description: 'Commandes récupérées avec succès.',
+  })
+  ordersByUserIdWithItems(@Param('userId') userId: string) {
+    return this.orderService.ordersByUserIdWithItems(userId);
+  }
 }
