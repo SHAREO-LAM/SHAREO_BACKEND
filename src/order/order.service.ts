@@ -2,13 +2,25 @@ import { Injectable } from '@nestjs/common';
 import { Order } from 'src/entities/entities/Orders';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/base.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { OrderItem } from 'src/entities/entities/OrderItem';
+import { Payment } from 'src/entities/entities/Payment';
+import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
+import { UserOrderInformations } from 'src/entities/entities/UserOrderInformations';
 
 @Injectable()
 export class OrderService extends BaseService<Order> {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepo: Repository<Order>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepo: Repository<OrderItem>,
+    @InjectRepository(Payment)
+    private readonly paymentRepo: Repository<Payment>,
+    @InjectRepository(CompanyPayout)
+    private readonly companyPayoutRepo: Repository<CompanyPayout>,
+    @InjectRepository(UserOrderInformations)
+    private readonly userOrderInformationsRepo: Repository<UserOrderInformations>,
   ) {
     super(orderRepo);
   }
@@ -21,8 +33,26 @@ export class OrderService extends BaseService<Order> {
     return super.update(id, dto, 'orderId');
   }
 
-  removeById(id: number | string) {
-    return super.remove(id, 'orderId');
+  async removeById(id: number | string) {
+    const orderId = String(id);
+    await this.findOneById(id);
+
+    await this.orderRepo.manager.transaction(async (manager) => {
+      const orderItems = await manager.find(OrderItem, {
+        select: { orderItemId: true },
+        where: { orderId },
+      });
+      const orderItemIds = orderItems.map((item) => item.orderItemId);
+
+      if (orderItemIds.length > 0) {
+        await manager.delete(CompanyPayout, { orderItemId: In(orderItemIds) });
+      }
+
+      await manager.delete(UserOrderInformations, { orderId });
+      await manager.delete(Payment, { orderId });
+      await manager.delete(OrderItem, { orderId });
+      await manager.delete(Order, { orderId });
+    });
   }
 
   ordersByUserIdWithItems(userId: number | string) {

@@ -20,8 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migration:run": "npx typeorm migration:run -d dist/typeorm.config.js",
     "migration:revert": "npx typeorm migration:revert -d dist/typeorm.config.js",
-    "migration:generate": "npx typeorm migration:generate",
-    "migration:create": "npx typeorm migration:create"
+    "migration:generate": "npx typeorm migration:generate -d dist/typeorm.config.js",
+    "migration:create": "npx typeorm migration:create -d dist/typeorm.config.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
