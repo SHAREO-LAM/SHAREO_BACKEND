@@ -13,9 +13,9 @@ export class UserService extends BaseService<User> {
     super(userRepo);
   }
 
-  findOneById(id: number | string) {
-    return super.findOne(id, 'userId');
-  }
+findOneById(id: number | string, relations: string[] = []) {
+  return super.findOne(id, 'userId', relations);
+}
 
   updateById(id: number | string, dto: Partial<User>) {
     return super.update(id, dto, 'userId');
