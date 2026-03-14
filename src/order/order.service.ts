@@ -24,4 +24,24 @@ export class OrderService extends BaseService<Order> {
   removeById(id: number | string) {
     return super.remove(id, 'orderId');
   }
+
+  ordersByUserIdWithItems(userId: number | string) {
+    return this.orderRepo.find({
+      where: { userId: String(userId) },
+      relations: {
+        status: true,
+        orderItems: {
+          domain: {
+            company: true,
+          },
+          equipementCompany: {
+            company: true,
+          },
+        },
+      },
+      order: {
+        datetimeCreate: 'DESC',
+      },
+    });
+  }
 }
