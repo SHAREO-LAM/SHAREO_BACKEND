@@ -32,7 +32,6 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user: User) {
-    console.log("User  COMPANIESS", user.userCompanies)
     return {
       userId: user.userId,
       login: user.login,
