@@ -8,6 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
   imports: [TypeOrmModule.forFeature([CompanyPayout])],
   controllers: [CompanyPayoutController],
   providers: [CompanyPayoutService],
-  exports: [CompanyPayoutService],
+  exports: [CompanyPayoutService, TypeOrmModule],
 })
 export class CompanyPayoutModule {}
