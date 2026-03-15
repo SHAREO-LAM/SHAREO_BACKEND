@@ -21,8 +21,11 @@ export class BaseService<T extends ObjectLiteral> {
    * @param id The value of the primary key
    * @param pk The name of the primary key property in the entity
    */
-  async findOne(id: number | string, pk: keyof T): Promise<T> {
-    const entity = await this.repo.findOneBy({ [pk]: id } as any);
+  async findOne(id: number | string, pk: keyof T,   relations: string[] = [],): Promise<T> {
+    const entity = await this.repo.findOne({
+      where: { [pk]: id } as any,
+      relations,  
+    });
     if (!entity) throw new NotFoundException(`Entity #${id} not found`);
     return entity;
   }

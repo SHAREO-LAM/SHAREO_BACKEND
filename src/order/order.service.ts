@@ -74,4 +74,25 @@ export class OrderService extends BaseService<Order> {
       },
     });
   }
+
+   
+ // order.service.ts
+
+async getOrdersByCompany(companyId: number) {
+  return this.orderRepo
+    .createQueryBuilder('order')
+    .leftJoinAndSelect('order.status', 'status')
+    .leftJoinAndSelect('order.user', 'user')
+    .leftJoinAndSelect('order.orderItems', 'orderItem')
+    .leftJoinAndSelect('orderItem.domain', 'domain')
+    .leftJoinAndSelect('orderItem.equipementCompany', 'equipementCompany')
+    .leftJoinAndSelect('equipementCompany.equipementType', 'equipementType')
+    .leftJoinAndSelect('orderItem.companyPayouts', 'companyPayouts')
+    .leftJoinAndSelect('companyPayouts.payoutStatus', 'payoutStatus')
+    .leftJoinAndSelect('order.payments', 'payments')
+    .leftJoinAndSelect('order.userOrderInformations', 'userOrderInformations')
+    .where('equipementCompany.company_id = :companyId', { companyId })
+    .orderBy('order.datetime_create', 'DESC')
+    .getMany();
+}
 }

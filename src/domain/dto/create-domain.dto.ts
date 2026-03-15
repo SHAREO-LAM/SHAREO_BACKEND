@@ -1,90 +1,88 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsNumber } from 'class-validator';
 
 export class CreateDomainDto {
+
   @ApiProperty({ description: 'Nom du domaine' })
   @IsString()
   name: string;
 
-  @ApiProperty({ description: 'Description du domaine', required: false })
+  @ApiPropertyOptional({ description: 'Description du domaine' })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'Nom de la rue', required: false })
+  @ApiPropertyOptional({ description: 'Nom de la rue' })
   @IsOptional()
   @IsString()
   streetName?: string;
 
-  @ApiProperty({ description: 'Complément de rue', required: false })
+  @ApiPropertyOptional({ description: 'Complément de rue' })
   @IsOptional()
   @IsString()
   streetNameAdd?: string;
 
-  @ApiProperty({ description: 'Numéro de maison', required: false })
+  @ApiPropertyOptional({ description: 'Numéro de maison' })
   @IsOptional()
   @IsString()
   houseNumber?: string;
 
-  @ApiProperty({ description: 'Code postal', required: false })
+  @ApiPropertyOptional({ description: 'Code postal' })
   @IsOptional()
   @IsString()
   postcode?: string;
 
-  @ApiProperty({ description: 'Ville', required: false })
+  @ApiPropertyOptional({ description: 'Ville' })
   @IsOptional()
   @IsString()
   city?: string;
 
-  @ApiProperty({ description: 'Pays', required: false })
+  @ApiPropertyOptional({ description: 'Pays' })
   @IsOptional()
   @IsString()
   country?: string;
 
-  @ApiProperty({ description: 'Latitude', required: false })
+  @ApiPropertyOptional({ description: 'Latitude', type: Number })
   @IsOptional()
   @IsNumber()
   latitude?: number;
 
-  @ApiProperty({ description: 'Longitude', required: false })
+  @ApiPropertyOptional({ description: 'Longitude', type: Number })
   @IsOptional()
   @IsNumber()
   longitude?: number;
 
-  @ApiProperty({ description: 'Prix par jour', required: false })
+  @ApiPropertyOptional({ description: 'Prix par jour', type: Number })
   @IsOptional()
   @IsNumber()
   pricePerDay?: number;
 
-  @ApiProperty({ description: 'Capacité', required: false })
+  @ApiPropertyOptional({ description: 'Capacité' })
   @IsOptional()
   @IsString()
   capacity?: string;
 
-  @ApiProperty({ description: 'URL de l’image', required: false })
+  @ApiPropertyOptional({ description: 'URL de l’image' })
   @IsOptional()
   @IsString()
   imageUrl?: string;
 
-  @ApiProperty({ description: 'Date de création', required: false })
+  @ApiPropertyOptional({ description: 'Date de création' })
   @IsOptional()
   @IsString()
   datetimeCreate?: string;
 
-  @ApiProperty({ description: 'Date de mise à jour', required: false })
+  @ApiPropertyOptional({ description: 'Date de mise à jour' })
   @IsOptional()
   @IsString()
   datetimeUpdate?: string;
 
-  @ApiProperty({ description: 'ID de l’utilisateur créateur', required: false })
+  @ApiPropertyOptional({ description: 'ID de l’utilisateur créateur' })
   @IsOptional()
   @IsString()
   userCreateId?: string;
 
-  @ApiProperty({
-    description: 'ID de l’utilisateur modificateur',
-    required: false,
-  })
+  @ApiPropertyOptional({ description: 'ID de l’utilisateur modificateur' })
   @IsOptional()
   @IsString()
   userUpdateId?: string;

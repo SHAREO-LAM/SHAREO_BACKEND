@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiOkResponse } from '@nestjs/swagger';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -76,5 +76,13 @@ export class OrderController {
   })
   ordersByUserIdWithItems(@Param('userId') userId: string) {
     return this.orderService.ordersByUserIdWithItems(userId);
+  }
+
+
+  @Get('company/:companyId')
+  @ApiOkResponse({ description: 'Récupère les commandes pour une entreprise', type: [Order] })
+  async getOrdersByCompany(@Param('companyId') companyId: string): Promise<Order[]> {
+    const orders = await  this.orderService.getOrdersByCompany(parseFloat(companyId));
+    return orders
   }
 }

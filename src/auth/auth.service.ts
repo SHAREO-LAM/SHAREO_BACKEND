@@ -27,10 +27,12 @@ export class AuthService {
       email: string;
       isAdmin: boolean | null;
       isSuperAdmin: boolean | null;
+      companyId: string | null;
     };
   }> {
     const existingUser = await this.userRepository.findOne({
       where: [{ email: registerDto.email }, { login: registerDto.login }],
+      relations: ['userCompanies'],
     });
 
     if (existingUser) {
@@ -48,7 +50,9 @@ export class AuthService {
     });
 
     await this.userRepository.save(user);
+
     const token = this.generateToken(user);
+
     return {
       access_token: token,
       user: {
@@ -56,6 +60,7 @@ export class AuthService {
         email: user.email,
         isAdmin: user.isAdmin,
         isSuperAdmin: user.isSuperAdmin,
+        companyId: null,
       },
     };
   }
@@ -63,6 +68,7 @@ export class AuthService {
   async login(loginDto: LoginDto) {
     const user = await this.userRepository.findOne({
       where: { email: loginDto.email },
+      relations: ['userCompanies'],
     });
 
     if (!user) {
@@ -87,6 +93,7 @@ export class AuthService {
         email: user.email,
         isAdmin: user.isAdmin,
         isSuperAdmin: user.isSuperAdmin,
+        companyId: user.userCompanies?.[0]?.companyId || null,
       },
     };
   }
@@ -104,6 +111,10 @@ export class AuthService {
   }
 
   async validateUser(userId: string): Promise<User | null> {
-    return this.userRepository.findOne({ where: { userId } });
+    // On charge la relation pour le profile
+    return this.userRepository.findOne({
+      where: { userId },
+      relations: ['userCompanies'],
+    });
   }
 }

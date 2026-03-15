@@ -38,6 +38,7 @@ export class AuthController {
       email: user.email,
       isAdmin: user.isAdmin,
       isSuperAdmin: user.isSuperAdmin,
+      companyId : user.userCompanies?.[0]?.companyId || null
     };
   }
 }

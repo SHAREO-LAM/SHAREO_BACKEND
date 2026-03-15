@@ -2,7 +2,7 @@
 
 *.sqlite
 *.sqlite3
-
+shareo_mmic*.sql
 # compiled output
 /dist
 /node_modules
