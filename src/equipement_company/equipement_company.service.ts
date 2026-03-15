@@ -5,7 +5,6 @@ import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/base.service';
 import { IsNull, Repository } from 'typeorm';
-import { OrderItem } from 'src/entities/entities/OrderItem';
 
 @Injectable()
 export class EquipementCompanyService extends BaseService<EquipementCompany> {
