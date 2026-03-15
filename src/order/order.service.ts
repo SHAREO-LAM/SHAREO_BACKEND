@@ -7,7 +7,6 @@ import { OrderItem } from 'src/entities/entities/OrderItem';
 import { Payment } from 'src/entities/entities/Payment';
 import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 import { UserOrderInformations } from 'src/entities/entities/UserOrderInformations';
-import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 
 @Injectable()
 export class OrderService extends BaseService<Order> {
