@@ -5,6 +5,7 @@ import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/base.service';
 import { IsNull, Repository } from 'typeorm';
+import { OrderItem } from 'src/entities/entities/OrderItem';
 
 @Injectable()
 export class EquipementCompanyService extends BaseService<EquipementCompany> {
@@ -42,12 +43,16 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
   }
 
   async removeById(id: number | string) {
-    const idStr = String(id);
+    const equipementCompanyId = String(id);
+    await this.findOneById(id);
 
-    // Soft delete : met à jour datetimeDeleted au lieu de supprimer
-    await this.equipementCompanyRepo.update(
-      { equipementCompanyId: idStr },
-      { datetimeDeleted: new Date() },
-    );
+    await this.equipementCompanyRepo.manager.transaction(async (manager) => {
+      await manager.update(
+        OrderItem,
+        { equipementCompanyId },
+        { equipementCompanyId: null as any },
+      );
+      await manager.delete(EquipementCompany, { equipementCompanyId });
+    });
   }
 }

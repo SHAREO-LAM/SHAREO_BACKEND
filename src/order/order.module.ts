@@ -4,9 +4,22 @@ import { OrderController } from './order.controller';
 import { Order } from 'src/entities/entities/Orders';
 import { TypeOrmModule } from '@nestjs/typeorm/dist/typeorm.module';
 import { CompanyPayoutModule } from 'src/company_payout/company_payout.module';
+import { OrderItem } from 'src/entities/entities/OrderItem';
+import { Payment } from 'src/entities/entities/Payment';
+import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
+import { UserOrderInformations } from 'src/entities/entities/UserOrderInformations';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order]), CompanyPayoutModule],
+  imports: [
+    TypeOrmModule.forFeature([
+      Order,
+      OrderItem,
+      Payment,
+      CompanyPayout,
+      UserOrderInformations,
+    ]),
+    CompanyPayoutModule
+  ],
   controllers: [OrderController],
   providers: [OrderService],
   exports: [TypeOrmModule]
