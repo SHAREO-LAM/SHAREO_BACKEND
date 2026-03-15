@@ -3,12 +3,15 @@ import { EquipementCompany } from 'src/entities/entities/EquipementCompany';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BaseService } from 'src/common/base.service';
 import { Repository } from 'typeorm';
+import { OrderItem } from 'src/entities/entities/OrderItem';
 
 @Injectable()
 export class EquipementCompanyService extends BaseService<EquipementCompany> {
   constructor(
     @InjectRepository(EquipementCompany)
     private readonly equipementCompanyRepo: Repository<EquipementCompany>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepo: Repository<OrderItem>,
   ) {
     super(equipementCompanyRepo);
   }
@@ -25,7 +28,17 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
     return super.update(id, dto, 'equipementCompanyId');
   }
 
-  removeById(id: number | string) {
-    return super.remove(id, 'equipementCompanyId');
+  async removeById(id: number | string) {
+    const equipementCompanyId = String(id);
+    await this.findOneById(id);
+
+    await this.equipementCompanyRepo.manager.transaction(async (manager) => {
+      await manager.update(
+        OrderItem,
+        { equipementCompanyId },
+        { equipementCompanyId: null as any },
+      );
+      await manager.delete(EquipementCompany, { equipementCompanyId });
+    });
   }
 }
