@@ -18,6 +18,7 @@ import { PayoutStatusModule } from './payout_status/payout_status.module';
 import { CompanyPayoutModule } from './company_payout/company_payout.module';
 import { CheckoutModule } from './checkout/checkout.module';
 import { UserOrderInformations } from './entities/entities/UserOrderInformations';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { UserOrderInformations } from './entities/entities/UserOrderInformations
     PayoutStatusModule,
     CompanyPayoutModule,
     CheckoutModule,
+    StorageModule,
   ],
   controllers: [],
   providers: [],
