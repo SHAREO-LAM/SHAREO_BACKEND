@@ -48,6 +48,13 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
   }
 
   updateById(id: number | string, dto: Partial<EquipementCompany>) {
+    if (dto.companyId === '') {
+      delete dto.companyId;
+    }
+    if (dto.equipementTypeId === '') {
+      delete dto.equipementTypeId;
+    }
+
     return super.update(id, dto, 'equipementCompanyId');
   }
 
