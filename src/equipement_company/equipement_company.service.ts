@@ -54,4 +54,11 @@ export class EquipementCompanyService extends BaseService<EquipementCompany> {
       await manager.delete(EquipementCompany, { equipementCompanyId });
     });
   }
+
+  async findByCompanyId(companyId: string): Promise<EquipementCompany[]> {
+  return this.equipementCompanyRepo.find({
+    where: { companyId },
+    relations: ['equipementType', 'equipementType.equipementCategory'],
+  });
+}
 }

@@ -21,6 +21,10 @@ export class DomainService extends BaseService<Domain> {
     return super.findOne(id, 'domainId');
   }
 
+  async findByCompanyId(companyId: string): Promise<Domain[]> {
+    return this.domainRepo.find({ where: { companyId } });
+  }
+
   updateById(id: number | string, dto: Partial<Domain>) {
     return super.update(id, dto, 'domainId');
   }
