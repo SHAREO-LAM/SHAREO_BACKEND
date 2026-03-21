@@ -1,10 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'debug', 'log'],
+  });
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
@@ -35,8 +37,9 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 
   const url = await app.getUrl();
-  console.log(`Application is running on: ${url}/api`);
-  console.log(`Swagger documentation is available at: ${url}/docs`);
+  const logger = new Logger('Bootstrap');
+  logger.log(`✨ Application is running on: ${url}/api`);
+  logger.log(`📚 Swagger documentation is available at: ${url}/api/docs`);
 }
 
 void bootstrap();

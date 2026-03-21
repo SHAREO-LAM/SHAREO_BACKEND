@@ -19,6 +19,8 @@ import { CompanyPayoutModule } from './company_payout/company_payout.module';
 import { CheckoutModule } from './checkout/checkout.module';
 import { UserOrderInformations } from './entities/entities/UserOrderInformations';
 import { StorageModule } from './storage/storage.module';
+import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { LoggerMiddleware } from './common/logger.middleware';
 
 @Module({
   imports: [
@@ -31,7 +33,7 @@ import { StorageModule } from './storage/storage.module';
       database: process.env.DB_NAME || 'shareo',
       autoLoadEntities: true,
       synchronize: false,
-      logging: ['query', 'error'],
+      logging: ['error'],
       entities: [UserOrderInformations],
       migrations: ['dist/db/migrations/*{.ts,.js}'],
       migrationsRun: true,
@@ -58,4 +60,8 @@ import { StorageModule } from './storage/storage.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
+  }
+}
