@@ -8,6 +8,11 @@ import {
   Delete,
   Query,
   NotFoundException,
+  HttpStatus,
+  ParseFilePipeBuilder,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +20,8 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBody,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { EquipementCompanyService } from './equipement_company.service';
 import { CreateEquipementCompanyDto } from './dto/create-equipement_company.dto';
@@ -22,6 +29,10 @@ import { UpdateEquipementCompanyDto } from './dto/update-equipement_company.dto'
 import { EquipementCompany } from '../entities/entities/EquipementCompany';
 import { EquipementCompanyReadDto } from './dto/read-equipement-company.dto';
 import { AvailabilityService } from './availability.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/entities/entities/Users';
 
 @ApiTags('Equipement companies')
 @Controller('equipement-company')
@@ -39,6 +50,8 @@ export class EquipementCompanyController {
       description: e.description ?? undefined,
       pricePerDay: e.pricePerDay,
       stock: e.stock,
+      imageUrl: e.imageUrl ?? undefined,
+      imageUrls: e.imageUrls ?? undefined,
       companyId: e.companyId,
       equipementTypeId: e.equipementTypeId,
       datetimeCreate: e.datetimeCreate,
@@ -145,6 +158,72 @@ async findByCompany(@Param('companyId') companyId: string): Promise<EquipementCo
   @ApiResponse({ status: 200, description: 'Équipement supprimé.' })
   remove(@Param('id') id: string) {
     return this.equipementCompanyService.removeById(+id);
+  }
+
+  @Post(':id/image')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Uploader une image d equipement sur S3' })
+  @ApiParam({ name: 'id', description: 'ID de l’equipement' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Image equipement mise a jour.',
+    type: EquipementCompanyReadDto,
+  })
+  async uploadImage(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: /^image\// })
+        .addMaxSizeValidator({ maxSize: 5 * 1024 * 1024 })
+        .build({
+          fileIsRequired: true,
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ): Promise<EquipementCompanyReadDto> {
+    const entity = await this.equipementCompanyService.uploadImage(+id, file, user);
+    return this.mapToReadDto(entity);
+  }
+
+  @Delete(':id/image')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Supprimer l image equipement (S3 + DB)' })
+  @ApiParam({ name: 'id', description: 'ID de l’equipement' })
+  @ApiQuery({
+    name: 'index',
+    required: false,
+    description: 'Index de l image a supprimer (defaut: 0)',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Image equipement supprimee.',
+    type: EquipementCompanyReadDto,
+  })
+  async removeImage(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Query('index') index?: string,
+  ): Promise<EquipementCompanyReadDto> {
+    const parsedIndex = Number.isInteger(Number(index)) ? Number(index) : 0;
+    const entity = await this.equipementCompanyService.removeImage(+id, user, parsedIndex);
+    return this.mapToReadDto(entity);
   }
 
   @Get(':id/unavailable-dates')

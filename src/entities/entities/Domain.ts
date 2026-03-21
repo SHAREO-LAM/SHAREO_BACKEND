@@ -70,6 +70,14 @@ export class Domain {
   @Column('varchar', { name: 'image_url', nullable: true, length: 255 })
   imageUrl: string | null;
 
+  @ApiPropertyOptional({
+    description: 'URLs des images (max 5)',
+    type: [String],
+    nullable: true,
+  })
+  @Column('jsonb', { name: 'image_urls', nullable: true, default: () => "'[]'" })
+  imageUrls: string[] | null;
+
   @ApiProperty({ description: 'Date de création', type: String, format: 'date' })
   @Column('date', { name: 'datetime_create', default: () => 'CURRENT_DATE' })
   datetimeCreate: string;

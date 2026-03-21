@@ -33,6 +33,16 @@ export class EquipementCompany {
   @Column('bigint', { name: 'stock' })
   stock: string;
 
+  @Column('character varying', {
+    name: 'image_url',
+    nullable: true,
+    length: 255,
+  })
+  imageUrl: string | null;
+
+  @Column('jsonb', { name: 'image_urls', nullable: true, default: () => "'[]'" })
+  imageUrls: string[] | null;
+
   @Column('date', { name: 'datetime_create', default: () => 'CURRENT_DATE' })
   datetimeCreate: string;
 
