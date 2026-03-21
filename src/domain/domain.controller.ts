@@ -7,6 +7,11 @@ import {
   Param,
   Delete,
   Query,
+  HttpStatus,
+  ParseFilePipeBuilder,
+  UploadedFile,
+  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,12 +19,18 @@ import {
   ApiResponse,
   ApiParam,
   ApiQuery,
+  ApiBody,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { DomainService } from './domain.service';
 import { CreateDomainDto } from './dto/create-domain.dto';
 import { UpdateDomainDto } from './dto/update-domain.dto';
 import { Domain } from '../entities/entities/Domain';
 import { AvailabilityService } from './availability.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from 'src/entities/entities/Users';
 
 @ApiTags('Domains')
 @Controller('domain')
@@ -73,6 +84,70 @@ export class DomainController {
   @ApiResponse({ status: 200, description: 'Domaine supprimé.' })
   remove(@Param('id') id: string) {
     return this.domainService.removeById(+id);
+  }
+
+  @Post(':id/image')
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Uploader une image de domaine sur S3' })
+  @ApiParam({ name: 'id', description: 'ID du domaine' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Image du domaine mise a jour.',
+    type: Domain,
+  })
+  uploadImage(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: /^image\// })
+        .addMaxSizeValidator({ maxSize: 5 * 1024 * 1024 })
+        .build({
+          fileIsRequired: true,
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.domainService.uploadImage(+id, file, user);
+  }
+
+  @Delete(':id/image')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Supprimer l image de domaine (S3 + DB)' })
+  @ApiParam({ name: 'id', description: 'ID du domaine' })
+  @ApiQuery({
+    name: 'index',
+    required: false,
+    description: 'Index de l image a supprimer (defaut: 0)',
+    type: Number,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Image du domaine supprimee.',
+    type: Domain,
+  })
+  removeImage(
+    @Param('id') id: string,
+    @CurrentUser() user: User,
+    @Query('index') index?: string,
+  ) {
+    const parsedIndex = Number.isInteger(Number(index)) ? Number(index) : 0;
+    return this.domainService.removeImage(+id, user, parsedIndex);
   }
 
   @Get(':id/unavailable-dates')

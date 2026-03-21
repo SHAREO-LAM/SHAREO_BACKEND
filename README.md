@@ -39,7 +39,8 @@ getProfile(@CurrentUser() user: User) {
 docker-compose up --build
 
 # API : http://localhost:3000/api
-# Docs : http://localhost:3000/docs
+# Docs : http://localhost:3000/api/docs
+# MinIO Console : http://localhost:9001
 ```
 
 ### Production / Sandbox (sur VM avec PostgreSQL existant)
@@ -57,6 +58,103 @@ docker-compose -f docker-compose-backend.yml up -d
 
 Le backend se connectera au PostgreSQL existant sur la machine hôte.
 
+## Configuration S3 (images)
+
+Le backend stocke maintenant les images sur un stockage S3-compatible pour :
+
+- `domain.imageUrl`
+- `company.logoUrl`
+
+### Variables d'environnement S3
+
+```bash
+S3_BUCKET_NAME=shareo-media
+S3_REGION=eu-west-3
+S3_ACCESS_KEY_ID=...
+S3_SECRET_ACCESS_KEY=...
+
+# Optionnel (laisser vide pour AWS S3)
+S3_ENDPOINT=
+
+# URL publique utilisée pour construire les URLs retournées en DB
+S3_PUBLIC_BASE_URL=
+
+# true pour MinIO/localstack, false pour AWS S3
+S3_FORCE_PATH_STYLE=false
+
+# Préfixes d'objets
+S3_DOMAIN_IMAGES_PREFIX=domains
+S3_COMPANY_LOGOS_PREFIX=companies
+```
+
+### Environnement Local (S3 local)
+
+Le `docker-compose.yml` démarre :
+
+- `minio` (S3 local)
+- `minio-init` (création du bucket `shareo-media`)
+
+Commande :
+
+```bash
+docker-compose up --build
+```
+
+Accès MinIO :
+
+- API S3 : `http://localhost:9000`
+- Console : `http://localhost:9001`
+- Identifiants : `shareo / shareo123`
+
+### Environnement Sandbox
+
+Utilise un bucket dédié (ex: `shareo-media-sandbox`) et des credentials dédiés.
+
+Exemple :
+
+```bash
+S3_BUCKET_NAME=shareo-media-sandbox
+S3_REGION=eu-west-3
+S3_ACCESS_KEY_ID=<sandbox_access_key>
+S3_SECRET_ACCESS_KEY=<sandbox_secret_key>
+S3_PUBLIC_BASE_URL=https://shareo-media-sandbox.s3.eu-west-3.amazonaws.com
+S3_FORCE_PATH_STYLE=false
+```
+
+Si vous utilisez un provider S3-compatible (hors AWS), renseignez `S3_ENDPOINT`.
+
+### Environnement Production
+
+Même principe que sandbox, avec un bucket/credentials prod séparés.
+
+Exemple :
+
+```bash
+S3_BUCKET_NAME=shareo-media-prod
+S3_REGION=eu-west-3
+S3_ACCESS_KEY_ID=<prod_access_key>
+S3_SECRET_ACCESS_KEY=<prod_secret_key>
+S3_PUBLIC_BASE_URL=https://shareo-media-prod.s3.eu-west-3.amazonaws.com
+S3_FORCE_PATH_STYLE=false
+```
+
+## Endpoints upload images
+
+### Domaine
+
+- `POST /api/domain/:id/image` (multipart form-data, champ `file`)
+- `DELETE /api/domain/:id/image`
+
+### Entreprise
+
+- `POST /api/company/:id/logo` (multipart form-data, champ `file`)
+- `DELETE /api/company/:id/logo`
+
+Contraintes upload :
+
+- Types acceptés : `image/*`
+- Taille max : `5MB`
+
 ## Accès
 
 ```bash
@@ -64,7 +162,7 @@ Le backend se connectera au PostgreSQL existant sur la machine hôte.
 http://localhost:3000/api
 
 # Documentation Swagger
-http://localhost:3000/docs
+http://localhost:3000/api/docs
 ```
 
 ## Migrations

@@ -8,6 +8,7 @@ import { EquipementCompany } from 'src/entities/entities/EquipementCompany';
 import { UserCompany } from 'src/entities/entities/UserCompany';
 import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 import { OrderItem } from 'src/entities/entities/OrderItem';
+import { S3Service } from 'src/storage/s3.service';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {
@@ -24,6 +25,7 @@ export class CompanyService extends BaseService<Company> {
     private readonly companyPayoutRepo: Repository<CompanyPayout>,
     @InjectRepository(OrderItem)
     private readonly orderItemRepo: Repository<OrderItem>,
+    private readonly s3Service: S3Service,
   ) {
     super(companyRepo);
   }
@@ -37,9 +39,26 @@ export class CompanyService extends BaseService<Company> {
     return super.update(id, dto, 'companyId');
   }
 
+  async uploadLogo(companyId: number | string, file: Express.Multer.File) {
+    const company = await this.findOneById(companyId);
+    const prefix = process.env.S3_COMPANY_LOGOS_PREFIX || 'companies';
+    const { url } = await this.s3Service.uploadPublicImage(file, prefix);
+
+    await this.s3Service.deleteObjectByUrl(company.logoUrl);
+    return this.updateById(companyId, { logoUrl: url });
+  }
+
+  async removeLogo(companyId: number | string) {
+    const company = await this.findOneById(companyId);
+    await this.s3Service.deleteObjectByUrl(company.logoUrl);
+    return this.updateById(companyId, { logoUrl: null });
+  }
+
   async removeById(id: number | string) {
     const companyId = String(id);
-    await this.findOneById(id);
+    const company = await this.findOneById(id);
+
+    await this.s3Service.deleteObjectByUrl(company.logoUrl);
 
     await this.companyRepo.manager.transaction(async (manager) => {
       const domains = await manager.find(Domain, {

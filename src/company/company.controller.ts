@@ -6,12 +6,24 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  ParseFilePipeBuilder,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBody,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { CompanyService } from './company.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from '../entities/entities/Company';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Companies')
 @Controller('company')
@@ -66,5 +78,55 @@ export class CompanyController {
   @ApiResponse({ status: 200, description: 'Entreprise supprimée.' })
   remove(@Param('id') id: string) {
     return this.companyService.removeById(+id);
+  }
+
+  @Post(':id/logo')
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Uploader un logo entreprise sur S3' })
+  @ApiParam({ name: 'id', description: 'ID de l’entreprise' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Logo entreprise mis a jour.',
+    type: Company,
+  })
+  uploadLogo(
+    @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addFileTypeValidator({ fileType: /^image\// })
+        .addMaxSizeValidator({ maxSize: 5 * 1024 * 1024 })
+        .build({
+          fileIsRequired: true,
+          errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+        }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.companyService.uploadLogo(+id, file);
+  }
+
+  @Delete(':id/logo')
+  @ApiOperation({ summary: 'Supprimer le logo entreprise (S3 + DB)' })
+  @ApiParam({ name: 'id', description: 'ID de l’entreprise' })
+  @ApiResponse({
+    status: 200,
+    description: 'Logo entreprise supprime.',
+    type: Company,
+  })
+  removeLogo(@Param('id') id: string) {
+    return this.companyService.removeLogo(+id);
   }
 }
