@@ -22,10 +22,25 @@ export class BaseService<T extends ObjectLiteral> {
    * @param pk The name of the primary key property in the entity
    */
   async findOne(id: number | string, pk: keyof T,   relations: string[] = [],): Promise<T> {
-    const entity = await this.repo.findOne({
-      where: { [pk]: id } as any,
+    // Convert id to string for consistent handling
+    const idStr = String(id);
+    const idNum = Number(idStr);
+    
+    // First attempt with direct comparison (handles normal cases)
+    let entity = await this.repo.findOne({
+      where: { [pk]: idStr } as any,
       relations,  
     });
+
+    // If not found and ID is numeric, try with numeric coercion
+    // This handles TypeORM/Database driver type mismatches
+    if (!entity && !isNaN(idNum)) {
+      entity = await this.repo.findOne({
+        where: { [pk]: idNum } as any,
+        relations,  
+      });
+    }
+
     if (!entity) throw new NotFoundException(`Entity #${id} not found`);
     return entity;
   }
