@@ -1,8 +1,42 @@
 # Docker
 node_modules/
 dist/
+build/
+
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
 
 # Database
 postgres_data/
 *.sqlite
 *.sqlite3
+
+# Logs and cache
+npm-debug.log*
+.cache
+.nyc_output
+coverage
+
+# OS
+.DS_Store
+
+# Documentation
+README.md
+
+# Tests (won't be run in Docker)
+test
+src/**/*.spec.ts
+src/**/*.test.ts
