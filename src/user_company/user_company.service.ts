@@ -13,6 +13,13 @@ export class UserCompanyService extends BaseService<UserCompany> {
     super(userCompanyRepo);
   }
 
+  async findCompaniesByUserId(userId: number | string): Promise<UserCompany[]> {
+    return this.userCompanyRepo.find({
+      where: { userId: userId.toString() },
+      relations: ['company', 'user'],
+    });
+  }
+
   findOneById(id: number | string) {
     return super.findOne(id, 'userCompanyId');
   }
