@@ -90,6 +90,20 @@ export class EquipementCompanyController {
     return entities.map(this.mapToReadDto);
   }
 
+
+@Get('company/:companyId')
+@ApiOperation({ summary: 'Récupérer tous les équipements d’une company' })
+@ApiParam({ name: 'companyId', description: 'ID de la company' })
+@ApiResponse({
+  status: 200,
+  description: 'Liste des équipements pour la company',
+  type: [EquipementCompanyReadDto],
+})
+async findByCompany(@Param('companyId') companyId: string): Promise<EquipementCompanyReadDto[]> {
+  const entities = await this.equipementCompanyService.findByCompanyId(companyId);
+  return entities.map(this.mapToReadDto);
+}
+
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer un équipement par ID' })
   @ApiParam({ name: 'id', description: 'ID de l’équipement' })

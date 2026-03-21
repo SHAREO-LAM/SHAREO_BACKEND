@@ -27,7 +27,7 @@ export class DomainController {
   constructor(
     private readonly domainService: DomainService,
     private readonly availabilityService: AvailabilityService,
-  ) {}
+  ) { }
 
   @Post()
   @ApiOperation({ summary: 'Créer un domaine' })
@@ -124,5 +124,13 @@ export class DomainController {
     );
 
     return { available: isAvailable };
+  }
+
+  @Get('company/:companyId')
+  @ApiOperation({ summary: 'Récupérer tous les domaines d’une company' })
+  @ApiParam({ name: 'companyId', description: 'ID de la company' })
+  @ApiResponse({ status: 200, description: 'Liste des domaines', type: [Domain] })
+  async findByCompany(@Param('companyId') companyId: string): Promise<Domain[]> {
+    return this.domainService.findByCompanyId(companyId);
   }
 }

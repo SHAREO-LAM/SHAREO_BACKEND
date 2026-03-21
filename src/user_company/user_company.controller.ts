@@ -54,6 +54,18 @@ export class UserCompanyController {
     return this.userCompanyService.findOneById(+id);
   }
 
+  @Get('user/:userId')
+  @ApiOperation({ summary: 'Récupérer toutes les companies d’un utilisateur' })
+  @ApiParam({ name: 'userId', description: 'ID de l’utilisateur' })
+  @ApiResponse({
+    status: 200,
+    description: 'Liste des associations User-Company trouvées',
+    type: [UserCompany],
+  })
+  async findByUserId(@Param('userId') userId: string) {
+    return this.userCompanyService.findCompaniesByUserId(userId);
+  }
+
   @Patch(':id')
   @ApiOperation({ summary: 'Mettre à jour une association' })
   @ApiParam({ name: 'id', description: 'ID de l’association' })
