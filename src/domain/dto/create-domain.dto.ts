@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 export class CreateDomainDto {
 
@@ -94,6 +94,6 @@ export class CreateDomainDto {
   userUpdateId?: string;
 
   @ApiProperty({ description: 'ID de l’entreprise associée' })
-  @IsString()
+  @IsNumberString()
   companyId: string;
 }

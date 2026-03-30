@@ -9,6 +9,7 @@ import { UserCompany } from 'src/entities/entities/UserCompany';
 import { CompanyPayout } from 'src/entities/entities/CompanyPayout';
 import { OrderItem } from 'src/entities/entities/OrderItem';
 import { S3Service } from 'src/storage/s3.service';
+import { CompanyStatusEnum } from './enums/company-status.enum';
 
 @Injectable()
 export class CompanyService extends BaseService<Company> {
@@ -37,6 +38,18 @@ export class CompanyService extends BaseService<Company> {
 
   updateById(id: number | string, dto: Partial<Company>) {
     return super.update(id, dto, 'companyId');
+  }
+
+  findValidated(): Promise<Company[]> {
+    return this.companyRepo.find({
+      where: { status: CompanyStatusEnum.VALIDATED },
+    });
+  }
+
+  findPendingValidation(): Promise<Company[]> {
+    return this.companyRepo.find({
+      where: { status: CompanyStatusEnum.PENDING_VALIDATION },
+    });
   }
 
   async uploadLogo(companyId: number | string, file: Express.Multer.File) {

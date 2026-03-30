@@ -9,6 +9,7 @@ import { CompanyPayout } from './CompanyPayout';
 import { Domain } from './Domain';
 import { EquipementCompany } from './EquipementCompany';
 import { UserCompany } from './UserCompany';
+import { CompanyStatusEnum } from '../../company/enums/company-status.enum';
 
 @Index('company_pkey', ['companyId'], { unique: true })
 @Entity('company', { schema: 'public' })
@@ -99,6 +100,13 @@ export class Company {
 
   @Column('character varying', { name: 'website', nullable: true, length: 255 })
   website: string | null;
+
+  @Column('character varying', {
+    name: 'status',
+    length: 255,
+    default: () => "'PENDING_VALIDATION'",
+  })
+  status: CompanyStatusEnum;
 
   @Column('character varying', {
     name: 'logo_url',

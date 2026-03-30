@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsNumberString, IsOptional, IsString } from 'class-validator';
 
 export class CreateEquipementCompanyDto {
   @ApiProperty({ description: 'Nom affiché de l’équipement' })
@@ -31,11 +31,11 @@ export class CreateEquipementCompanyDto {
   imageUrls?: string[];
 
   @ApiProperty({ description: 'ID de la société' })
-  @IsString()
+  @IsNumberString()
   companyId: string;
 
   @ApiProperty({ description: 'ID du type d’équipement' })
-  @IsString()
+  @IsNumberString()
   equipementTypeId: string;
 
   @ApiProperty({ description: 'Date de création', required: false })

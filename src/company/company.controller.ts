@@ -48,6 +48,28 @@ export class CompanyController {
     return this.companyService.findAll();
   }
 
+  @Get('validated')
+  @ApiOperation({ summary: 'Lister les entreprises validees' })
+  @ApiResponse({
+    status: 200,
+    description: 'Liste des entreprises validees.',
+    type: [Company],
+  })
+  findValidated() {
+    return this.companyService.findValidated();
+  }
+
+  @Get('pending-validation')
+  @ApiOperation({ summary: 'Lister les entreprises en attente de validation' })
+  @ApiResponse({
+    status: 200,
+    description: 'Liste des entreprises en attente.',
+    type: [Company],
+  })
+  findPendingValidation() {
+    return this.companyService.findPendingValidation();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer une entreprise par ID' })
   @ApiParam({ name: 'id', description: 'ID de l’entreprise' })
